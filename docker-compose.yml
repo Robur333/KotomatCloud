@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kotomatdb
+      MYSQL_USER: kotomatuser
+      MYSQL_PASSWORD: kotomatpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - kotomat-network
+
+      
+
+  backend:
+    build: ./Kotomat-javaSpringProject
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kotomatdb
+      SPRING_DATASOURCE_USERNAME: kotomatuser
+      SPRING_DATASOURCE_PASSWORD: kotomatpassword
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - kotomat-network
+
+  frontend:
+    build: ./kotomat-front
+    ports:
+      - "5137:5137"
+    networks:
+      - kotomat-network
+
+volumes:
+  mysql-data:
+
+networks:
+  kotomat-network:
